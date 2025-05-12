@@ -1,62 +1,43 @@
+// Object storing functions and variables for API
+let weather = {
+    "apiKey": "35d0104a0b98ecdd30d19b5e703fe921",
+    fetchWeather: function (city) {
+       fetch("https://api.openweathermap.org/data/2.5/weather?q=" +
+       city +
+       "&units=metric&appid=" +
+       this.apiKey)
+       
+       .then((response) => response.json())
+       .then((data) => this.displayWeather(data))
+    },
+    displayWeather: function(data) {
+        const { name } = data;
+        const { icon, description } = data.weather[0];
+        const { temp, humidity } = data.main;
+        const { speed } = data.wind;
 
-//API KEY YOU CAN FIND IT ONLINE ON rapidapi.com //
-const options = {
-    method: 'GET',
-    headers: {
-        'X-RapidAPI-Key': '0208b2e448msh88525771ea5d522p103226jsn14d469ca1ebe',
-        'X-RapidAPI-Host': 'weather-by-api-ninjas.p.rapidapi.com'
+        document.querySelector(".city").innerText = "Weather in " + name;
+        document.querySelector(".icon").src = "https://openweathermap.org/img/wn/" + icon + ".png";
+        document.querySelector(".weather-description").innerText = description;
+        document.querySelector(".temp").innerText = temp + "°C";
+        document.querySelector('.humidity').innerText = "Humidity: " + humidity + "%";
+        document.querySelector(".wind").innerText = "Wind Speed: " + speed + "km/h";
+        document.querySelector(".weather").classList.remove("loading");
+    },
+    weatherSearch: function() {
+        this.fetchWeather(document.querySelector(".searchbar").value);
     }
-};
-
-//////////////////////////////////////////////
-
-
-
-
-const getWeather =(city)=>{
-    cityName.innerHTML = city
-
-
- // THIS IS rapid aid jqury  request /////// 
-fetch('https://weather-by-api-ninjas.p.rapidapi.com/v1/weather?city=' +city , options)
-    .then(response => response.json())
-    .then((response) => {
-////////////////////////////////////////////////
-
-//elements used in wether api ///////
-        console.log(response)
-
-        
-        temp.innerHTML= response.temp
-        temp2.innerHTML= response.temp
-        feels_like .innerHTML= response.feels_like
-        humidity.innerHTML= response.humidity
-        humidity2.innerHTML= response.humidity
-        min_temp.innerHTML= response.min_temp
-        max_temp.innerHTML= response.max_temp
-        wind_speed .innerHTML= response.wind_speed
-        wind_speed2 .innerHTML= response.wind_speed
-        wind_degrees.innerHTML= response.wind_degrees
-        sunrise.innerHTML= response.sunrise
-        sunset.innerHTML= response.sunset
-
-
-
-
-
-    })
-    .catch(err => console.error(err));
 }
-///////////////////////////////////////
 
-//This is to prevent page for reloading automatically//////
-submit.addEventListener("click",(e)=>{
-    e.preventDefault()
-    getWeather(city.value)
-
-  ////////////////////////////////////////////////////////
-
-
+const searchBtn = document.querySelector(".search button");
+searchBtn.addEventListener("click", function() {
+    weather.weatherSearch();
 })
 
-getWeather("Delhi")
+document.querySelector(".searchbar").addEventListener("keyup", function(event) {
+    if (event.key == "Enter") {
+        weather.weatherSearch();
+    }
+})
+
+weather.fetchWeather("Toronto");
